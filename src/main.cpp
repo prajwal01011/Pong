@@ -139,6 +139,18 @@ int main(){
         player.update();
         cpu.Update(ball.y);
 
+        //check for collision
+        
+        //player
+       if(CheckCollisionCircleRec(Vector2 {ball.x, ball.y}, ball.radius, Rectangle{player.x, player.y, player.Width, player.Height})){
+        ball.speed_x *= -1;
+       } 
+       //cpu
+       if (CheckCollisionCircleRec(Vector2{ball.x, ball.y}, ball.radius, Rectangle {cpu.x, cpu.y, cpu.Width, cpu.Height})) {
+        ball.speed_x *= -1;
+       
+       }
+
         //Drawing
         ClearBackground(BLACK);
         DrawLine(Screen_Width/2, 0, Screen_Width/2, Screen_Height, WHITE);
