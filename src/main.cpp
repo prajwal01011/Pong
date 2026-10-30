@@ -54,6 +54,12 @@ class Paddle{
          if (IsKeyDown(KEY_DOWN)) {
             y = y + speed;
          }
+         if (y <= 0){
+            y = 0;
+         }
+         if(y + Height >= GetScreenHeight()){
+            y = GetScreenHeight() - Height;
+         }
 
 
     }   
