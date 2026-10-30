@@ -2,6 +2,16 @@
 #include <raylib.h>
  
 using namespace std;
+Color Green = {0, 255, 0, 255};
+Color Maroon = {171, 40, 82,245};
+Color Yellow = {255, 255, 0, 240};
+Color Pink = {255, 0, 191, 255};
+Color Black = {0, 0, 0, 255};
+Color Red = {255, 20, 20, 255};
+
+
+int player_score = 0;
+int cpu_score = 0;
 
 class Ball{
     public:
@@ -11,7 +21,7 @@ class Ball{
 
     void Draw(){
 
-        DrawCircle(x, y, radius, WHITE);
+        DrawCircle(x, y, radius, Yellow);
 
     }
     void Update(){
@@ -22,10 +32,24 @@ class Ball{
             speed_y *= -1;
         }
 
-        if(x + radius >= GetScreenWidth() || x - radius <= 0){
-            speed_x *= -1;
-
+        if(x + radius >= GetScreenWidth() )// cpu wins 
+        {
+            cpu_score ++;
+            reset_ball();
+        } 
+        if(x - radius <= 0){    //player wins
+            player_score ++;
+            reset_ball();
         }
+
+    }
+    void reset_ball(){
+        x = GetScreenWidth() / 2 ;
+        y = GetScreenHeight() / 2 ;
+
+        int speed_choice[2] = {-1,1};
+        speed_x *= speed_choice[GetRandomValue(0,1)];
+        speed_y *= speed_choice [GetRandomValue(0, 1)];
 
     }
 
@@ -51,9 +75,7 @@ class Paddle{
 
     void Draw(){
 
-    DrawRectangle(x, y, Width,Height, WHITE);
-
-
+    DrawRectangleRounded(Rectangle{x,y, Width, Height}, 0.8, 0, WHITE);
     }
 
     void update(){
@@ -134,30 +156,42 @@ int main(){
     while(WindowShouldClose() == false){
 
         BeginDrawing();
-        //updating
+    //updating
+
         ball.Update();
         player.update();
         cpu.Update(ball.y);
 
-        //check for collision
+    //check for collision
         
         //player
-       if(CheckCollisionCircleRec(Vector2 {ball.x, ball.y}, ball.radius, Rectangle{player.x, player.y, player.Width, player.Height})){
+
+        if(CheckCollisionCircleRec(Vector2 {ball.x, ball.y}, ball.radius, Rectangle{player.x, player.y, player.Width, player.Height})){
         ball.speed_x *= -1;
        } 
+    
        //cpu
+
        if (CheckCollisionCircleRec(Vector2{ball.x, ball.y}, ball.radius, Rectangle {cpu.x, cpu.y, cpu.Width, cpu.Height})) {
         ball.speed_x *= -1;
        
        }
 
-        //Drawing
-        ClearBackground(BLACK);
-        DrawLine(Screen_Width/2, 0, Screen_Width/2, Screen_Height, WHITE);
+    //Drawing
+        ClearBackground(Red);
+        DrawRectangle(Screen_Width/2, 0, Screen_Width/2, Screen_Height, Maroon);
+        DrawLine(Screen_Width/2, 0, Screen_Width/2, Screen_Height, Black);
+        DrawCircle(Screen_Width / 2, Screen_Height / 2, 65,Black);
+        DrawCircle(Screen_Width / 2, Screen_Height / 2, 60,Red);
+        DrawCircleSector(Vector2{640, 400}, 60, 0, 180, 24, WHITE); 
+        DrawLineEx((Vector2){ Screen_Width/2-60,Screen_Height / 2  },(Vector2){ Screen_Width/2+60, Screen_Height / 2  },5.0f,BLACK); 
+        DrawCircle(Screen_Width / 2, Screen_Height / 2, 20,Black);
+        DrawCircle(Screen_Width / 2, Screen_Height / 2, 15,WHITE);
         ball.Draw();
         cpu.Draw();
+        DrawText(TextFormat("%i",cpu_score), Screen_Width / 4 - 20, 20, 60, WHITE);
         player.Draw();
-        
+        DrawText(TextFormat("%i",player_score), 3 * Screen_Width / 4- 20, 20, 60, WHITE);
 
         EndDrawing();
 
